@@ -1,0 +1,66 @@
+{
+  "entities": {
+    "Trip": {
+      "title": "Trip",
+      "description": "Main trip configuration",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "startDate": { "type": "string", "format": "date" },
+        "endDate": { "type": "string", "format": "date" },
+        "ownerUid": { "type": "string" },
+        "members": { 
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["name", "startDate", "endDate", "ownerUid"]
+    },
+    "Activity": {
+      "title": "Activity",
+      "description": "A scheduled activity within a day",
+      "type": "object",
+      "properties": {
+        "tripId": { "type": "string" },
+        "dayIndex": { "type": "integer" },
+        "time": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "location": { "type": "object" },
+        "type": { "type": "string", "enum": ["transport", "food", "sightseeing", "hotel", "other"] },
+        "cost": { "type": "number" },
+        "currency": { "type": "string" }
+      },
+      "required": ["tripId", "dayIndex", "time", "title"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "A financial transaction during the trip",
+      "type": "object",
+      "properties": {
+        "tripId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "amount": { "type": "number" },
+        "currency": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "payerUid": { "type": "string" }
+      },
+      "required": ["tripId", "date", "amount", "currency", "category", "payerUid"]
+    }
+  },
+  "firestore": {
+    "/trips/{tripId}": {
+      "schema": "Trip",
+      "description": "Trip metadata"
+    },
+    "/trips/{tripId}/activities/{activityId}": {
+      "schema": "Activity",
+      "description": "Activities for the trip"
+    },
+    "/trips/{tripId}/expenses/{expenseId}": {
+      "schema": "Expense",
+      "description": "Expenses for the trip"
+    }
+  }
+}

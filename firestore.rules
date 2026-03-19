@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: trips
+    // Document ID: {tripId}
+    // Fields:
+    //   - name: string (required)
+    //   - startDate: string (required, YYYY-MM-DD)
+    //   - endDate: string (required, YYYY-MM-DD)
+    //   - ownerUid: string (required)
+    //   - members: list of strings (optional)
+    //
+    // Collection: trips/{tripId}/activities
+    // Document ID: {activityId}
+    // Fields:
+    //   - tripId: string (required)
+    //   - dayIndex: int (required)
+    //   - time: string (required)
+    //   - title: string (required)
+    //   - description: string (optional)
+    //   - location: map (optional)
+    //   - type: string (required, enum)
+    //   - cost: number (optional)
+    //   - currency: string (optional)
+    //
+    // Collection: trips/{tripId}/expenses
+    // Document ID: {expenseId}
+    // Fields:
+    //   - tripId: string (required)
+    //   - date: string (required, YYYY-MM-DD)
+    //   - amount: number (required)
+    //   - currency: string (required)
+    //   - category: string (required)
+    //   - description: string (optional)
+    //   - payerUid: string (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isTripMember(tripId) {
+      let trip = get(/databases/$(database)/documents/trips/$(tripId)).data;
+      return isAuthenticated() && (trip.ownerUid == request.auth.uid || (trip.members != null && request.auth.uid in trip.members));
+    }
+
+    function isValidTrip(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.startDate is string && data.startDate.matches("^\\d{4}-\\d{2}-\\d{2}$") &&
+             data.endDate is string && data.endDate.matches("^\\d{4}-\\d{2}-\\d{2}$") &&
+             data.ownerUid is string && data.ownerUid == request.auth.uid;
+    }
+
+    function isValidActivity(data) {
+      return data.tripId is string &&
+             data.dayIndex is int &&
+             data.time is string && data.time.size() < 20 &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 100 &&
+             (!('type' in data) || data.type in ['transport', 'food', 'sightseeing', 'hotel', 'other']);
+    }
+
+    function isValidExpense(data) {
+      return data.tripId is string &&
+             data.date is string && data.date.matches("^\\d{4}-\\d{2}-\\d{2}$") &&
+             data.amount is number &&
+             data.currency is string &&
+             data.category is string &&
+             data.payerUid is string && data.payerUid == request.auth.uid;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /trips/{tripId} {
+      // Allow public access for the specific trip 'hangzhou-2026'
+      allow read, write: if tripId == 'hangzhou-2026';
+      
+      match /activities/{activityId} {
+        allow read, write: if tripId == 'hangzhou-2026';
+      }
+
+      match /expenses/{expenseId} {
+        allow read, write: if tripId == 'hangzhou-2026';
+      }
+    }
+
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "name": "杭州西湖Family Trip",
+  "description": "A high-end, mobile-first travel companion for a 7-day trip to Hangzhou, featuring a schedule, live view, weather, map, and expense tracker.",
+  "requestFramePermissions": ["geolocation"]
+}

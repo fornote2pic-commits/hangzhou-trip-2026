@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #1A1A1A;
+  --color-paper: #FDFCFB;
+  --color-accent: #8E8D8A;
+  --color-morandi-blue: #4A4E69;
+  --color-morandi-rose: #C9ADA7;
+  --color-beige: #D8C3A5;
+  --color-deep-beige: #8E8D8A;
+  
+  --font-sans: "Inter", "Noto Sans TC", sans-serif;
+  --font-serif: "Playfair Display", serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    @apply font-sans antialiased;
+  }
+
+  h1, h2, h3, .serif {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .modern-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    @apply backdrop-blur-md transition-all duration-500;
+  }
+
+  .modern-card:hover {
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+    @apply -translate-y-1;
+  }
+  
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-blur: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .tab-active {
+    @apply bg-morandi-blue text-paper shadow-xl scale-105;
+  }
+  
+  .icon-box {
+    @apply p-2.5 rounded-2xl bg-white/80 border border-white text-morandi-blue shadow-sm;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
