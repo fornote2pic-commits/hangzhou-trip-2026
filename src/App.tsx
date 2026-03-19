@@ -334,5 +334,3 @@ export default function App() {
     </APIProvider>
   );
 }
-
-export default App;
